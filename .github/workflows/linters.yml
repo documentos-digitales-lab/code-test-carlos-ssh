@@ -8,12 +8,12 @@ env:
 jobs:
   rubocop:
     name: Rubocop
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - uses: actions/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: 3.1.x
       - name: Setup Rubocop
         run: |
           gem install --no-document rubocop:'~>1.57.1'
@@ -23,7 +23,7 @@ jobs:
 
   stylelint:
     name: Stylelint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -38,13 +38,19 @@ jobs:
 
   rspec:
     name: RSpec Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-ruby@v1
-      - name: Setup Bundler
-        run: |
-          gem install bundler
-          bundle install
-      - name: Run RSpec Tests
+      - uses: actions/checkout@v2
+      - name: Install OS dependencies
+        run: sudo apt-get install libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Webpacker Install
+        run: yarn install
+      - name: Precompile Assets
+        run: bundle exec rails webpacker:compile
+      - name: Setup the postgres database
+        run: bundle exec rails db:setup
+      - name: Run the test suite
         run: bundle exec rspec
