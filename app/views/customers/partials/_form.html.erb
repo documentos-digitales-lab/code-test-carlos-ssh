@@ -1,0 +1,51 @@
+<%= form_for(@invoice) do |f| %>
+    <div class="form-container">
+        <%= f.hidden_field :customer_id, value: @customer.id %>
+        <button type="button" class="button-add">
+            Add item
+        </button>
+        <div class="items-section">
+            <div class="items-container">
+                <h2 class="item-title">Item #1</h2>
+                <div class="item-content">
+                    <div class="item">
+                        <span>Quantity</span>
+                        <input>
+                        <%# <%= f.text_field :title %>
+                    </div>
+                    <div class="item">
+                        <span>Product/Service</span>
+                        <input>
+                    </div>
+                    <div class="item">
+                        <span>Unit Price</span>
+                        <input>
+                    </div>
+                    <div class="item">
+                        <span>Amount</span>
+                        <input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ammount-container">
+            <div class="ammount-section">
+                <div class="form-section">
+                    <%= f.label :sub_total, 'Sub Total' %>
+                    <%= f.number_field :sub_total %>
+                </div>
+                <div class="form-section">
+                    <%= f.label :tax, 'IVA' %>
+                    <%= f.number_field :tax %>
+                </div>
+                <div class="form-section">
+                    <%= f.label :total, 'Grand Total' %>
+                    <%= f.number_field :total %>
+                </div>
+                <div>
+                    <%= f.submit "Create An Invoice", class: 'submit-button' %>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>
