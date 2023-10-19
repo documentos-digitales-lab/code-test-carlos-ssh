@@ -36,15 +36,48 @@ jobs:
       - name: Stylelint Report
         run: npx stylelint "**/*.{css,scss}"
 
-  rspec:
-    name: RSpec Tests
-    runs-on: ubuntu-22.04
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
+      MYSQL_HOST: localhost
+      RAILS_ENV: test
+
+    services:
+      mysql:
+        image: mysql:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_USER: root
+          MYSQL_PASSWORD: ""
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v2
+
       - name: Install OS dependencies
-        run: sudo apt-get install libpq-dev
+        run: sudo apt-get install libmysqlclient-dev
+
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
+      - name: Webpacker Install
+        run: yarn install
+
+      - name: Precompile Assets
+        run: bundle exec rails webpacker:compile
+
+      - name: Setup the MySQL database
+        run: bundle exec rake db:setup
+
       - name: Run the test suite
         run: bundle exec rspec
