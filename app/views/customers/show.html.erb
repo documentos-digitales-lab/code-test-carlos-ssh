@@ -2,8 +2,6 @@
 <ul>
   <li>Create An Invoice</li>
 </ul>
-<%= form_for(:invoice, url: invoices_path, method: :post) do |f| %>
-  <h2>Please add your products and click on Create:</h2>
-  <%= f.text_field :rfc %>
+<%= form_for(:customer, url: customer_path, method: :put) do |f| %>
   <%= f.submit "Create An Invoice" %>
 <% end %>

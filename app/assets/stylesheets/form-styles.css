@@ -1,0 +1,13 @@
+.form-section,
+.form-container {
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 720px;
+}
+
+.form-container {
+    text-align: right;
+}

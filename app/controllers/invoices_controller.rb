@@ -8,14 +8,23 @@ class InvoicesController < ApplicationController
   end
 
   def create
-    @customer = Customer.find_by(rfc: params[:invoice][:rfc])
-    @invoice = @customer.invoices.create(invoice_params)
-    redirect_to invoices_path(@invoice)
+    @customer = Customer.find(params[:invoice][:customer_id])
+    @invoice = @customer.invoices.build(invoice_params)
+
+    if @invoice.save
+      redirect_to root_path, notice: 'Invoice was successfully created.'
+    else
+      render :new
+    end
+  end
+
+  def new
+    @invoice = Invoice.new
   end
 
   private
 
   def invoice_params
-    params.require(:invoice).permit(:rfc)
+    params.require(:invoice).permit(:sub_total, :tax, :total)
   end
 end

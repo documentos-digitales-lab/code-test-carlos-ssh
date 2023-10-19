@@ -1,5 +1,9 @@
 class CustomersController < ApplicationController
   def new
+    # @customer = Customer.new
+    # if @customer
+    #   redirect_to new_invoice_path
+    # end
   end
 
   def show
