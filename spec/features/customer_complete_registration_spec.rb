@@ -13,4 +13,3 @@ RSpec.feature "A customer checks into the app" do
     expect(page).to have_content("Please add your products and click on Create:")
   end
 end
-
