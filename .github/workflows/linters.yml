@@ -46,11 +46,5 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Webpacker Install
-        run: yarn install
-      - name: Precompile Assets
-        run: bundle exec rails webpacker:compile
-      - name: Setup the postgres database
-        run: bundle exec rails db:setup
       - name: Run the test suite
         run: bundle exec rspec
