@@ -2,6 +2,24 @@
 <ul>
   <li>Create An Invoice</li>
 </ul>
-<%= form_for(:customer, url: customer_path, method: :put) do |f| %>
-  <%= f.submit "Create An Invoice" %>
+
+<%= form_for(@invoice) do |f| %>
+  <%= f.hidden_field :customer_id, value: @customer.id %>
+  <div class="form-container">
+    <div class="form-section">
+      <%= f.label :sub_total, 'Sub Total' %>
+      <%= f.number_field :sub_total %>
+    </div>
+    <div class="form-section">
+      <%= f.label :tax, 'IVA' %>
+      <%= f.number_field :tax %>
+    </div>
+    <div class="form-section">
+      <%= f.label :total, 'Grand Total' %>
+      <%= f.number_field :total %>
+    </div>
+    <div>
+      <%= f.submit "Create An Invoice" %>
+    </div>
+  </div>
 <% end %>
