@@ -14,4 +14,4 @@
  *= require_self
  */
 
-@import 'form-styles.css';
+@import url('form-styles.css');
