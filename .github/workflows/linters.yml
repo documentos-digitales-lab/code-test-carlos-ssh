@@ -20,18 +20,3 @@ jobs:
           [ -f .rubocop.yml ]
       - name: Rubocop Report
         run: rubocop --color
-
-  stylelint:
-    name: Stylelint
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "18.x"
-      - name: Setup Stylelint
-        run: |
-          yarn add --dev stylelint@15.11.x stylelint-scss@5.2.x stylelint-config-standard@34.0.x
-          [ -f .stylelintrc.json ]
-      - name: Stylelint Report
-        run: npx stylelint "**/*.{css,scss}"

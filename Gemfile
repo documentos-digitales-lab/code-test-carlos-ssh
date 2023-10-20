@@ -53,3 +53,5 @@ group :test do
   gem 'webdrivers', '~> 3.0'
   gem 'webmock'
 end
+
+gem 'tailwindcss-rails', '~> 2.0'

@@ -1,9 +1,17 @@
 Rails.application.routes.draw do
-  resources :customers, only: [:new, :create, :show, :update]
-  resources :invoices
-  resources :products
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # resources :customers, only: [:new, :create, :show, :update]
 
-  # Defines the root path route ("/")
+  resources :customers do
+    resources :invoices
+  end
+
+  resources :invoices do
+    resources :invoice_items
+  end
+
+  resources :invoice_items do
+    resources :products
+  end
+
   root "customers#new"
 end

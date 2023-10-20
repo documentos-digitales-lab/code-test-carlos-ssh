@@ -1,5 +1,6 @@
-<%= form_for @invoice do |f| %>
+<%= form_with model: @invoice, data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' } do |f| %>
     <%# <%= f.text_field :customer_id, value: @customer.id %>
+
     <div class="form-container">
         <div class="form-section">
             <%= f.label :sub_total, 'Sub Total' %>

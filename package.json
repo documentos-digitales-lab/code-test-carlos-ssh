@@ -2,15 +2,8 @@
     "name": "interviewproject",
     "private": true,
     "dependencies": {},
-    "devDependencies": {
-        "stylelint": "15.11.x",
-        "stylelint-config-standard": "34.0.x",
-        "stylelint-csstree-validator": "^1.9.0",
-        "stylelint-scss": "5.2.x"
-    },
-    "scripts": {
-        "lint:styles": "stylelint '**/*.{css,scss}'"
-    },
+    "devDependencies": {},
+    "scripts": {},
     "version": "1.0.0",
     "main": "index.js",
     "repository": "https://github.com/documentos-digitales/code-test-carlos-ssh.git",

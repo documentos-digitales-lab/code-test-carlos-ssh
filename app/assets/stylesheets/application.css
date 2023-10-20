@@ -14,4 +14,6 @@
  *= require_self
  */
 
-@import url('form-styles.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
