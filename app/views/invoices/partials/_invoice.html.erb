@@ -8,6 +8,20 @@
     </h5>
 </div>
 
+<div class="flex flex-col my-5">
+    <h5>Invoice Items:</h5>
+    <div class="bg-red-500 p-5 rounded-md">
+        <% @invoice.invoice_items.each do |item| %>
+            <div class="flex flex-col gap-3">
+                Name: <%= item.name %>,
+                Quantity: <%= item.quantity %>,
+                Unit Price: <%= number_to_currency(item.unit_price) %>,
+                Amount: <%= number_to_currency(item.amount) %>
+            </div>
+        <% end %>
+    </div>
+</div>
+
 <div>
     <h5>Sub Total</h5>
     <%= number_to_currency(@invoice.sub_total) %>

@@ -11,7 +11,6 @@ class InvoicesController < ApplicationController
     @customer = Customer.find(params[:invoice][:customer_id])
     @invoice = @customer.invoices.build(invoice_params)
 
-    format_values
     if @invoice.save
       redirect_to invoice_path(@invoice), notice: 'Invoice was successfully created.'
     else
@@ -35,16 +34,16 @@ class InvoicesController < ApplicationController
       invoice_items_attributes: %i[
         invoice_id
         quantity
-        product_id
+        name
         total_price
+        amount
         _destroy
       ]
-    )
+    ).tap do |whitelisted|
+      whitelisted[:sub_total] = whitelisted[:sub_total].to_f
+      whitelisted[:tax] = whitelisted[:tax].to_f
+      whitelisted[:total] = whitelisted[:total].to_f
+    end
   end
 
-  def format_values
-    @invoice.sub_total = params.require(:invoice)[:sub_total].to_f
-    @invoice.tax = params.require(:invoice)[:tax].to_f
-    @invoice.total = params.require(:invoice)[:total].to_f
-  end
 end
