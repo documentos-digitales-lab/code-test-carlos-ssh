@@ -8,6 +8,7 @@ class InvoicesController < ApplicationController
   end
 
   def create
+    @min_items = set_min_items
     @customer = Customer.find(params[:invoice][:customer_id])
     @invoice = @customer.invoices.build(invoice_params)
 
@@ -24,6 +25,10 @@ class InvoicesController < ApplicationController
   end
 
   private
+
+  def set_min_items
+    session[:invoice_items] = 1
+  end
 
   def invoice_params
     params.require(:invoice).permit(
@@ -45,5 +50,4 @@ class InvoicesController < ApplicationController
       whitelisted[:total] = whitelisted[:total].to_f
     end
   end
-
 end

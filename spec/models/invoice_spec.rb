@@ -17,10 +17,10 @@ RSpec.describe Invoice, type: :model do
       expect(invoice.tax).to_not eq(nil)
       expect(invoice.total).to_not eq(nil)
 
-      expect(invoice.customer_id).to_not eq("text")
-      expect(invoice.sub_total).to_not eq("text")
-      expect(invoice.tax).to_not eq("text")
-      expect(invoice.total).to_not eq("text")
+      expect(invoice.customer_id).to_not eq('text')
+      expect(invoice.sub_total).to_not eq('text')
+      expect(invoice.tax).to_not eq('text')
+      expect(invoice.total).to_not eq('text')
     end
   end
 end

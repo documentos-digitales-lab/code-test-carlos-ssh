@@ -1,4 +1,4 @@
-<tr class="nested-form-wrapper" data-new-record="<%= f.object.new_record? %>">
+<tr class="nested-form-wrapper revenue" data-new-record="<%= f.object.new_record? %>">
     <%= f.fields_for :invoice_items do |product_items_fields| %>
         <td class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
             <div class="inline-flex items-center gap-x-3">
@@ -32,10 +32,8 @@
         <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
             <div class="inline-flex items-center gap-x-3">
                 <div class="relative mt-2 rounded-md shadow-sm">
-                    <%# <%= f.number_field :amount, value: (product_items_fields.object&.quantity * product_items_fields.object&.unit_price), class: "w-full rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", readonly: true %>
-                    <%# f.number_field :amount, value: (multiply_items), class: "w-full rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
-                    <%# <%= f.number_field :amount, value: (multiply_items) %>
-                    <input type="text" id="amount" value="<%= :amount %>">
+                    <%# f.number_field :amount, class: "w-full rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+                    <%= number_to_currency(:amount)%>
                 </div>
             </div>
         </td>

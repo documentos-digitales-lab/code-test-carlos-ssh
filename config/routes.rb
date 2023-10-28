@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   end
 
   resources :invoice_items do
-    resources :products
+    resources :items
   end
 
   root "customers#new"
