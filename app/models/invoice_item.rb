@@ -1,12 +1,10 @@
 class InvoiceItem < ApplicationRecord
-  before_validation :calculate_amount, on: [:create, :update]
-
   validates :quantity,
     presence: true,
     numericality: { greater_than: 0 }
 
-    validates :name,
-      presence: true
+  validates :name,
+    presence: true
 
   validates :unit_price,
     presence: true,
@@ -18,10 +16,5 @@ class InvoiceItem < ApplicationRecord
 
 
   belongs_to :invoice
-
-  private
-
-  def amount
-    quantity * unit_price
-  end
+  belongs_to :item
 end
