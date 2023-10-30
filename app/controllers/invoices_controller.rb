@@ -1,33 +1,50 @@
 class InvoicesController < ApplicationController
-  def index
-    @invoices = Invoice.all
+  before_action :set_customer, only: [:new, :create]
+  before_action :set_invoice, only: %i[show edit update destroy]
+
+  def new
+    @invoice = @customer.invoices.build
+    @invoice.invoice_items.build
   end
 
   def show
-    @invoice = Invoice.find(params[:id])
   end
 
+  # def create
+  #   @invoice = @customer.invoices.build(invoice_params)
+
+  #   if @invoice.save
+  #     redirect_to invoice_path(@invoice), notice: 'Invoice was successfully created.'
+  #   else
+  #     flash[:alert] = 'Error al crear la factura.'
+  #     render :new
+  #   end
+
+  # rescue ActiveRecord::RecordNotFound
+  #   flash[:alert] = 'Cliente no encontrado.'
+  #   render :new
+  # end
+
   def create
-    @min_items = set_min_items
-    @customer = Customer.find(params[:invoice][:customer_id])
     @invoice = @customer.invoices.build(invoice_params)
 
     if @invoice.save
       redirect_to invoice_path(@invoice), notice: 'Invoice was successfully created.'
     else
+      flash[:alert] = @invoice.errors.full_messages.join(', ')
       render :new
     end
   end
 
-  def new
-    @invoice = Invoice.new
-    @invoice.invoice_items.build
-  end
 
   private
 
-  def set_min_items
-    session[:invoice_items] = 1
+  def set_customer
+    @customer = Customer.find(params[:invoice][:customer_id]) if params[:invoice] && params[:invoice][:customer_id]
+  end
+
+  def set_invoice
+    @invoice = Invoice.find(params[:id])
   end
 
   def invoice_params
@@ -36,18 +53,17 @@ class InvoicesController < ApplicationController
       :sub_total,
       :tax,
       :total,
-      invoice_items_attributes: %i[
-        invoice_id
-        quantity
-        name
-        total_price
-        amount
-        _destroy
+      invoice_items_attributes: [
+        :quantity,
+        :product_id,
+        :amount,
+        :_destroy,
+        product_attributes: [
+          :name,
+          :description,
+          :unit_price
+        ]
       ]
-    ).tap do |whitelisted|
-      whitelisted[:sub_total] = whitelisted[:sub_total].to_f
-      whitelisted[:tax] = whitelisted[:tax].to_f
-      whitelisted[:total] = whitelisted[:total].to_f
-    end
+    )
   end
 end

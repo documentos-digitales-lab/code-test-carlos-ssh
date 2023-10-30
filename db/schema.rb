@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_28_043104) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_29_155516) do
   create_table "customers", charset: "utf8mb3", force: :cascade do |t|
     t.string "rfc"
     t.datetime "created_at", null: false
@@ -19,28 +19,27 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_28_043104) do
 
   create_table "invoice_items", charset: "utf8mb3", force: :cascade do |t|
     t.integer "invoice_id"
-    t.integer "quantity", default: 0
-    t.string "name"
-    t.decimal "unit_price", precision: 10, default: "0"
-    t.decimal "amount", precision: 10, default: "0"
+    t.integer "product_id"
+    t.integer "quantity", default: 1
+    t.decimal "amount", precision: 10, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "invoices", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "customer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.decimal "sub_total", precision: 10, scale: 2
+    t.bigint "customer_id", null: false
+    t.decimal "subtotal", precision: 10, scale: 2
     t.decimal "tax", precision: 12, scale: 3
     t.decimal "total", precision: 8, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_invoices_on_customer_id"
   end
 
-  create_table "items", charset: "utf8mb3", force: :cascade do |t|
+  create_table "products", charset: "utf8mb3", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.float "unit_price"
+    t.integer "unit_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

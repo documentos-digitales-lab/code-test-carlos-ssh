@@ -4,6 +4,8 @@ class CustomersController < ApplicationController
   def show
     @customer = Customer.find(params[:id])
     @invoice = Invoice.new
+    @invoice.invoice_items.build
+    puts "@invoice.invoice_items: #{@invoice.invoice_items.inspect}"
   end
 
   def create

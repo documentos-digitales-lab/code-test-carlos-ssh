@@ -1,17 +1,13 @@
 Rails.application.routes.draw do
-  # resources :customers, only: [:new, :create, :show, :update]
+  resources :customers
+  resources :invoices
+  # resources :products
+  resources :products, only: [:show]
 
-  resources :customers do
-    resources :invoices
-  end
-
-  resources :invoices do
-    resources :invoice_items
-  end
-
-  resources :invoice_items do
-    resources :items
-  end
+  resources :invoice_items
 
   root "customers#new"
+
+  post "/customers/:customer_id/invoices", to: "invoices#create"
+  post "/invoices/:invoice_id/invoice_items", to: "invoice_items#create"
 end

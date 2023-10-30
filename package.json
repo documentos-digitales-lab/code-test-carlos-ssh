@@ -1,7 +1,9 @@
 {
     "name": "interviewproject",
     "private": true,
-    "dependencies": {},
+    "dependencies": {
+        "stimulus-dropdown": "^2.1.0"
+    },
     "devDependencies": {},
     "scripts": {},
     "version": "1.0.0",

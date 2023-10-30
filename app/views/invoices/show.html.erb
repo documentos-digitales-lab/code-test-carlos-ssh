@@ -1,5 +1,43 @@
 <div class="flex flex-col">
     <p>Please add your products and click on Create:</p>
 
-    <%= render "invoices/partials/invoice" %>
+    <h1>Invoice Generated</h1>
+    <div>
+        <h5>
+            Invoice number: <%= @invoice.id %>
+        </h5>
+        <h5>
+            Client number: <%= @invoice.customer_id %>
+        </h5>
+    </div>
+
+    <div class="flex flex-col my-5">
+        <h5>Invoice Items:</h5>
+        <div class="bg-red-500 p-5 rounded-md">
+            <% @invoice.invoice_items.each do |item| %>
+                <div class="flex flex-col gap-3">
+                    Quantity: <%= item.quantity %>,
+                    Name: <%= item.product.try(:name) %>,
+                    Unit Price: <%= number_to_currency(item.product.unit_price) %>,
+                    Amount: <%= number_to_currency(item.amount) %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+
+    <div>
+        <h5>Sub Total</h5>
+        <%= number_to_currency(@invoice.subtotal) %>
+    </div>
+
+    <div>
+        <h5>IVA</h5>
+        <%= number_to_currency(@invoice.tax) %>
+    </div>
+
+    <div>
+        <h5>Total</h5>
+        <%= number_to_currency(@invoice.total) %>
+    </div>
+
 </div>
