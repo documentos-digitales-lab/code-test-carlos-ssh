@@ -1,5 +1,4 @@
 class InvoiceItemsController < ApplicationController
-
   def index
     @quantity = params[:quantity]
     @amount = params[:amount]
@@ -26,7 +25,7 @@ class InvoiceItemsController < ApplicationController
     params.require(:invoice_item).permit(
       :quantity,
       :amount,
-      product_attributes: [:name, :unit_price]
+      product_attributes: %i[name unit_price]
     )
   end
 end

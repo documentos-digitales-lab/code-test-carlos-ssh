@@ -1,5 +1,5 @@
 class InvoicesController < ApplicationController
-  before_action :set_customer, only: [:new, :create]
+  before_action :set_customer, only: %i[new create]
   before_action :set_invoice, only: %i[show edit update destroy]
 
   def new
@@ -7,8 +7,7 @@ class InvoicesController < ApplicationController
     @invoice.invoice_items.build
   end
 
-  def show
-  end
+  def show; end
 
   # def create
   #   @invoice = @customer.invoices.build(invoice_params)
@@ -36,7 +35,6 @@ class InvoicesController < ApplicationController
     end
   end
 
-
   private
 
   def set_customer
@@ -58,11 +56,11 @@ class InvoicesController < ApplicationController
         :product_id,
         :amount,
         :_destroy,
-        product_attributes: [
-          :name,
-          :description,
-          :unit_price
-        ]
+        { product_attributes: %i[
+          name
+          description
+          unit_price
+        ] }
       ]
     )
   end
