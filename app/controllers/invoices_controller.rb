@@ -12,6 +12,11 @@ class InvoicesController < ApplicationController
   def create
     @invoice = @customer.invoices.build(invoice_params)
 
+    unless Product.where(id: params[:invoice][:invoice_items_attributes].values.pluck(:product_id)).exists?
+      flash[:error] = 'Invalid product selected'
+      render :new and return
+    end
+
     if @invoice.save
       redirect_to invoice_path(@invoice), notice: 'Invoice was successfully created.'
     else

@@ -58,14 +58,16 @@
       <% end %>
     </template>
 
-    <div class="w-full flex flex-row justify-between items-center my-5">
-      <h2 class="text-2xl font-bold dark:text-slate-200">Invoice Items</h2>
-      <button
-          type="button"
-          id="addButtonItems"
-          data-action="nested-form#add"
-          class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md"
-      >Add item</button>
+    <div class="topHead w-full flex flex-col justify-between items-center my-5">
+      <div class="w-full flex flex-row justify-between items-center my-5">
+        <h2 class="text-2xl font-bold dark:text-slate-200">Invoice Items</h2>
+        <button
+            type="button"
+            id="addButtonItems"
+            data-action="nested-form#add"
+            class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md"
+        >Add item</button>
+      </div>
     </div>
     <div class="w-full">
       <%= f.fields_for :invoice_items do |item_form| %>
@@ -137,11 +139,22 @@
 </div>
 
 <script>
+  let unitPriceValue;
   let invoiceItemsCount = <%= @invoice.invoice_items.size %>;
+  const productSelect = document.querySelector('.product-select');
+  const unitPrice = document.querySelector('.unit-price');
+  const quantity = document.getElementById('quantity');
+  const amountResult = document.getElementById('amount-result');
+  const subtotalResult = document.getElementById('subtotal');
+  const taxContent = document.getElementById('taxSixteen');
+  const totalContent = document.getElementById('grandTotal');
   const nestedContainer = document.getElementById('nestedContainer');
   const addItemButton = document.getElementById('addButtonItems');
   const deleteButtonItems = document.getElementById('deleteButtonItems');
+  const topHeadContainer = document.querySelector('.topHead');
+  const maxItemsMessage = document.createElement('p');
   const maxItems = 2;
+
 
   const removeItem = () => {
     if (invoiceItemsCount > 0) {
@@ -152,6 +165,20 @@
 
   const updateAddItemButton = () => {
     addItemButton.disabled = invoiceItemsCount >= maxItems;
+    if (invoiceItemsCount >= maxItems) {
+        maxItemsMessage.textContent = 'Invoices are limited to two items';
+        maxItemsMessage.classList.remove('hidden');
+        maxItemsMessage.classList.add(
+          "bg-red-500",
+          "w-full",
+          "text-white",
+          "text-center",
+          "rounded-md",
+          "py-1.5"
+        );
+    } else {
+        maxItemsMessage.classList.add('hidden');
+    }
   };
 
   updateAddItemButton();
@@ -163,89 +190,81 @@
       }
   });
 
-  let unitPriceValue;
-  const productSelect = document.querySelector('.product-select');
-  const unitPrice = document.querySelector('.unit-price');
-  const quantity = document.getElementById('quantity');
-  const amountResult = document.getElementById('amount-result');
-  const subtotalResult = document.getElementById('subtotal');
-  const taxContent = document.getElementById('taxSixteen');
-  const totalContent = document.getElementById('grandTotal');
+  const updateUnitPrice = async () => {
+    const selectedProductId = productSelect.value || 0;
 
-    const updateUnitPrice = async () => {
-      const selectedProductId = productSelect.value || 0;
-
-      unitPrice.textContent = selectedProductId;
-      await fetch(`/products/${selectedProductId}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-        .then((response) => response.json())
-        .then(data => {
-          unitPrice.value = data.unit_price.toFixed(2);
-          unitPriceValue = data.unit_price;
-          multiplyAmount(unitPriceValue);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-
-    const subtotalsAmount = (amount) => {
-      let formattedAmount;
-
-      if (amount.value === 0) {
-        formattedAmount = '$0.00';
-      } else {
-        formattedAmount = amount.toFixed(2);
+    unitPrice.textContent = selectedProductId;
+    await fetch(`/products/${selectedProductId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
       }
-
-      subtotalResult.textContent = `$ ${formattedAmount}`;
-      getTax(formattedAmount)
-    };
-
-    const multiplyAmount = (unitPrice) => {
-      const selectedQuantity = quantity.value;
-      const amount = unitPrice * selectedQuantity;
-      amountResult.value = amount.toFixed(2);
-      subtotalsAmount(amount)
-    };
-
-    const getTax = (formattedAmount) => {
-      const taxConversion = formattedAmount * 0.16;
-      const formatedTax = taxConversion.toFixed(2);
-      taxContent.textContent = `$ ${formatedTax}`;
-      grandTotal(formattedAmount, formatedTax);
-    };
-
-    const grandTotal = (formattedAmount, formatedTax) => {
-      console.log('Amount: ', formattedAmount);
-      console.log('Tax', formatedTax);
-      const fAmount = parseFloat(formattedAmount);
-      const fTax = parseFloat(formatedTax)
-
-      const total = fAmount + fTax;
-      const fTotal = total.toFixed(2)
-      totalContent.textContent = `$ ${fTotal}`
-      console.log(fTotal);
-    };
-
-    if (productSelect) {
-      productSelect.addEventListener('change', updateUnitPrice);
-    }
-
-    if (quantity) {
-      quantity.addEventListener('input', () => {
+    })
+      .then((response) => response.json())
+      .then(data => {
+        unitPrice.value = data.unit_price.toFixed(2);
+        unitPriceValue = data.unit_price;
         multiplyAmount(unitPriceValue);
+      })
+      .catch((error) => {
+        console.error(error);
       });
+  };
+
+  const subtotalsAmount = (amount) => {
+    let formattedAmount;
+
+    if (amount.value === 0) {
+      formattedAmount = '$0.00';
+    } else {
+      formattedAmount = amount.toFixed(2);
     }
 
-    if (subtotalResult) {
-      subtotalResult.addEventListener('input', () => {
-        subtotalsAmount(amount);
-      });
-    }
+    subtotalResult.textContent = `$ ${formattedAmount}`;
+    getTax(formattedAmount)
+  };
 
+  const multiplyAmount = (unitPrice) => {
+    const selectedQuantity = quantity.value;
+    const amount = unitPrice * selectedQuantity;
+    amountResult.value = amount.toFixed(2);
+    subtotalsAmount(amount)
+  };
+
+  const getTax = (formattedAmount) => {
+    const taxConversion = formattedAmount * 0.16;
+    const formatedTax = taxConversion.toFixed(2);
+    taxContent.textContent = `$ ${formatedTax}`;
+    grandTotal(formattedAmount, formatedTax);
+  };
+
+  const grandTotal = (formattedAmount, formatedTax) => {
+    console.log('Amount: ', formattedAmount);
+    console.log('Tax', formatedTax);
+    const fAmount = parseFloat(formattedAmount);
+    const fTax = parseFloat(formatedTax)
+
+    const total = fAmount + fTax;
+    const fTotal = total.toFixed(2)
+    totalContent.textContent = `$ ${fTotal}`
+    console.log(fTotal);
+  };
+
+  if (productSelect) {
+    productSelect.addEventListener('change', updateUnitPrice);
+  }
+
+  if (quantity) {
+    quantity.addEventListener('input', () => {
+      multiplyAmount(unitPriceValue);
+    });
+  }
+
+  if (subtotalResult) {
+    subtotalResult.addEventListener('input', () => {
+      subtotalsAmount(amount);
+    });
+  }
+
+  topHeadContainer.appendChild(maxItemsMessage);
 </script>
