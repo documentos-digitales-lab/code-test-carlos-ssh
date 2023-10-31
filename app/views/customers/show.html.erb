@@ -19,7 +19,17 @@
 
           <div class="flex flex-col">
             <span class="font-bold pl-3">Service</span>
-            <%= item_form.collection_select :product_id, Product.all, :id, :name, { prompt: 'Select a product' }, class: 'product-select rounded-md border-slate-100 shadow-md' %>
+            <%= item_form.collection_select :product_id,
+                          Product.all,
+                          :id,
+                          :name,
+                          { prompt: 'Select a product' },
+                          data: {
+                            controller: 'invoice-item',
+                            target: 'invoice-item.productSelect'
+                          },
+                          class: 'product-select rounded-md border-slate-100 shadow-md'
+            %>
           </div>
 
           <div class="">
@@ -44,7 +54,7 @@
 
     <div class="w-full flex flex-row justify-between items-center my-5">
       <h2 class="text-2xl font-bold dark:text-slate-200">Invoice Items</h2>
-      <button type="button" data-action="nested-form#add" class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md">Add todo</button>
+      <button type="button" data-action="nested-form#add" class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md">Add item</button>
     </div>
     <div class="w-full">
       <%= f.fields_for :invoice_items do |item_form| %>
@@ -56,7 +66,17 @@
 
           <div class="flex flex-col">
             <span class="font-bold pl-3">Service</span>
-            <%= item_form.collection_select :product_id, Product.all, :id, :name, { prompt: 'Select a product' }, class: 'product-select rounded-md border-slate-100 shadow-md' %>
+            <%= item_form.collection_select :product_id,
+                          Product.all,
+                          :id,
+                          :name,
+                          { prompt: 'Select a product' },
+                          data: {
+                              controller: 'invoice-item',
+                              target: 'invoice-item.productSelect'
+                          },
+                          class: 'product-select rounded-md border-slate-100 shadow-md'
+            %>
           </div>
 
           <div class="">

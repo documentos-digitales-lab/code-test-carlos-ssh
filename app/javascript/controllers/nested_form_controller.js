@@ -7,3 +7,4 @@ export default class extends NestedForm {
     console.log('value: ', quantityField)
   }
 }
+

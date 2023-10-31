@@ -5,7 +5,6 @@ class InvoicesController < ApplicationController
   def new
     @invoice = @customer.invoices.build
     @invoice.invoice_items.build
-    @invoice.invoice_items.build
   end
 
   def show; end
