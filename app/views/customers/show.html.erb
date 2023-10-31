@@ -11,7 +11,7 @@
 
     <template data-nested-form-target="template">
       <%= f.fields_for :invoice_items, InvoiceItem.new, child_index: 'NEW_RECORD' do |item_form| %>
-        <div class="p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3 my-5 nested-form-wrapper" data-controller="invoice-item"  data-new-record="<%= f.object.new_record? %>">
+        <div id="nestedContainer" class="p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3 my-5 nested-form-wrapper" data-controller="invoice-item"  data-new-record="<%= f.object.new_record? %>">
           <div class="flex flex-col">
             <span class="font-bold pl-3">Quantity</span>
             <%= item_form.number_field :quantity, id: 'quantity', min: 0, class: 'rounded-md border-slate-100 shadow-md' %>
@@ -45,7 +45,13 @@
             <%= item_form.text_field :amount, id: 'amount-result', class: 'rounded-md border-slate-100 shadow-md' %>
           </div>
           <div class="flex flex-col justify-center items-center h-full my-auto pt-4">
-              <button type="button" data-action="nested-form#remove" class="text-red-500 font-bold text-4xl">-</button>
+              <button
+                  type="button"
+                  id="deleteButtonItems"
+                  data-action="nested-form#remove"
+                  class="text-red-500 font-bold text-4xl"
+                  onclick="removeItem();"
+              >-</button>
               <%= f.hidden_field :_destroy %>
           </div>
         </div>
@@ -54,7 +60,12 @@
 
     <div class="w-full flex flex-row justify-between items-center my-5">
       <h2 class="text-2xl font-bold dark:text-slate-200">Invoice Items</h2>
-      <button type="button" data-action="nested-form#add" class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md">Add item</button>
+      <button
+          type="button"
+          id="addButtonItems"
+          data-action="nested-form#add"
+          class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md"
+      >Add item</button>
     </div>
     <div class="w-full">
       <%= f.fields_for :invoice_items do |item_form| %>
@@ -126,15 +137,40 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    let unitPriceValue;
-    const productSelect = document.querySelector('.product-select');
-    const unitPrice = document.querySelector('.unit-price');
-    const quantity = document.getElementById('quantity');
-    const amountResult = document.getElementById('amount-result');
-    const subtotalResult = document.getElementById('subtotal');
-    const taxContent = document.getElementById('taxSixteen');
-    const totalContent = document.getElementById('grandTotal');
+  let invoiceItemsCount = <%= @invoice.invoice_items.size %>;
+  const nestedContainer = document.getElementById('nestedContainer');
+  const addItemButton = document.getElementById('addButtonItems');
+  const deleteButtonItems = document.getElementById('deleteButtonItems');
+  const maxItems = 2;
+
+  const removeItem = () => {
+    if (invoiceItemsCount > 0) {
+      invoiceItemsCount--;
+      updateAddItemButton();
+    }
+  };
+
+  const updateAddItemButton = () => {
+    addItemButton.disabled = invoiceItemsCount >= maxItems;
+  };
+
+  updateAddItemButton();
+
+  addItemButton.addEventListener('click', () => {
+      if (invoiceItemsCount < maxItems) {
+        invoiceItemsCount++;
+        updateAddItemButton();
+      }
+  });
+
+  let unitPriceValue;
+  const productSelect = document.querySelector('.product-select');
+  const unitPrice = document.querySelector('.unit-price');
+  const quantity = document.getElementById('quantity');
+  const amountResult = document.getElementById('amount-result');
+  const subtotalResult = document.getElementById('subtotal');
+  const taxContent = document.getElementById('taxSixteen');
+  const totalContent = document.getElementById('grandTotal');
 
     const updateUnitPrice = async () => {
       const selectedProductId = productSelect.value || 0;
@@ -211,6 +247,5 @@
         subtotalsAmount(amount);
       });
     }
-  });
 
 </script>
