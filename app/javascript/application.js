@@ -2,6 +2,6 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import esModuleShim from 'es-module-shim';
-import AmountCalculatorController from 'controllers/amount_calculator_controller';
 
-Controller.register('amount-calculator', AmountCalculatorController);
+
+

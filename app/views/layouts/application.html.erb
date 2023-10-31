@@ -11,9 +11,9 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="dark:bg-slate-950">
     <%= render 'layouts/partials/flash' %>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <main class="mx-auto w-full h-screen justify-center items-center flex">
       <%= yield %>
     </main>
   </body>

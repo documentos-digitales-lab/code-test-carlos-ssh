@@ -5,24 +5,10 @@ class InvoicesController < ApplicationController
   def new
     @invoice = @customer.invoices.build
     @invoice.invoice_items.build
+    @invoice.invoice_items.build
   end
 
   def show; end
-
-  # def create
-  #   @invoice = @customer.invoices.build(invoice_params)
-
-  #   if @invoice.save
-  #     redirect_to invoice_path(@invoice), notice: 'Invoice was successfully created.'
-  #   else
-  #     flash[:alert] = 'Error al crear la factura.'
-  #     render :new
-  #   end
-
-  # rescue ActiveRecord::RecordNotFound
-  #   flash[:alert] = 'Cliente no encontrado.'
-  #   render :new
-  # end
 
   def create
     @invoice = @customer.invoices.build(invoice_params)
