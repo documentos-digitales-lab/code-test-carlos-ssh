@@ -1,7 +1,274 @@
-<p>Please complete all of the steps on this page:</p>
-<ul>
-  <li>Create An Invoice</li>
-</ul>
-<%= form_for(:customer, url: customer_path, method: :put) do |f| %>
-  <%= f.submit "Complete Process" %>
-<% end %>
+<div class="h-full flex flex-col justify-center items-center w-full mx-auto max-w-[1124px]">
+  <p class="dark:text-slate-200">Please complete all of the steps on this page:</p>
+  <ul>
+    <li class="dark:text-slate-200">Create An Invoice</li>
+  </ul>
+
+  <%# render 'customers/partials/form' %>
+
+  <%= form_for @invoice, url: invoices_path, data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' }, method: :post do |f| %>
+    <%= f.hidden_field :customer_id, value: @customer.id %>
+
+    <template data-nested-form-target="template">
+      <%= f.fields_for :invoice_items, InvoiceItem.new, child_index: 'NEW_RECORD' do |item_form| %>
+        <div id="nestedContainer" class="p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3 my-5 nested-form-wrapper" data-controller="invoice-item"  data-new-record="<%= f.object.new_record? %>">
+          <div class="flex flex-col">
+            <span class="font-bold pl-3">Quantity</span>
+            <%= item_form.number_field :quantity, id: 'quantityNested', min: 0, class: 'rounded-md border-slate-100 shadow-md' %>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="font-bold pl-3">Service</span>
+            <%= item_form.collection_select :product_id,
+                          Product.all,
+                          :id,
+                          :name,
+                          { prompt: 'Select a product' },
+                          data: {
+                            controller: 'invoice-item',
+                            target: 'invoice-item.productSelect'
+                          },
+                          class: 'productSelectNested rounded-md border-slate-100 shadow-md'
+            %>
+          </div>
+
+          <div class="">
+            <%= item_form.fields_for :product_attributes do |product_form| %>
+              <div class="flex flex-col">
+                <span class='font-bold pl-3'>Unit Price</span>
+                <%= product_form.text_field :unit_price, class: "unitPriceNested rounded-md border-slate-100 shadow-md" %>
+              </div>
+            <% end %>
+          </div>
+          <div class="flex flex-col">
+            <span class='font-bold pl-3'>Amount</span>
+            <%= item_form.text_field :amount, id: 'amountResultNested', class: 'rounded-md border-slate-100 shadow-md' %>
+          </div>
+          <div class="flex flex-col justify-center items-center h-full my-auto pt-4">
+              <button
+                  type="button"
+                  id="deleteButtonItems"
+                  data-action="nested-form#remove"
+                  class="text-red-500 font-bold text-4xl"
+                  onclick="removeItem();"
+              >-</button>
+              <%= f.hidden_field :_destroy %>
+          </div>
+        </div>
+      <% end %>
+    </template>
+
+    <div class="topHead w-full flex flex-col justify-between items-center my-5">
+      <div class="w-full flex flex-row justify-between items-center my-5">
+        <h2 class="text-2xl font-bold dark:text-slate-200">Invoice Items</h2>
+        <button
+            type="button"
+            id="addButtonItems"
+            data-action="nested-form#add"
+            class="bg-blue-500 px-2.5 py-1.5 text-white rounded-md shadow-md"
+        >Add item</button>
+      </div>
+    </div>
+    <div class="w-full min-h-[320px]">
+      <%= f.fields_for :invoice_items do |item_form| %>
+        <div class="mb-5 p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3" data-controller="invoice-item">
+          <div class="flex flex-col">
+            <span class="font-bold pl-3">Quantity</span>
+            <%= item_form.number_field :quantity, id: 'quantity', min: 0, class: 'rounded-md border-slate-100 shadow-md' %>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="font-bold pl-3">Service</span>
+            <%= item_form.collection_select :product_id,
+                          Product.all,
+                          :id,
+                          :name,
+                          { prompt: 'Select a product' },
+                          data: {
+                              controller: 'invoice-item',
+                              target: 'invoice-item.productSelect'
+                          },
+                          class: 'product-select rounded-md border-slate-100 shadow-md'
+            %>
+          </div>
+
+          <div class="">
+            <%= item_form.fields_for :product_attributes do |product_form| %>
+              <div class="flex flex-col">
+                <span class='font-bold pl-3'>Unit Price</span>
+                <%= product_form.text_field :unit_price, class: "unit-price rounded-md border-slate-100 shadow-md" %>
+              </div>
+            <% end %>
+          </div>
+          <div class="flex flex-col">
+            <span class='font-bold pl-3'>Amount</span>
+            <%= item_form.text_field :amount, id: 'amount-result', class: 'rounded-md border-slate-100 shadow-md' %>
+          </div>
+        </div>
+      <% end %>
+    <div data-nested-form-target="target"></div>
+    </div>
+
+
+    <div class="flex flex-col justify-end">
+      <div class="bg-slate-200 rounded-md shadow-md my-5 p-5">
+        <div class="flex flex-row gap-5">
+          <span class="text-right">Subtotal</span>
+          <p id="subtotal"></p>
+          <%# @invoice.invoice_items.sum(&:amount) %>
+        </div>
+
+        <div class="flex flex-row gap-5">
+          <span class="text-right">Tax 16%</span>
+          <%# @invoice.invoice_items.sum(&:amount) * 0.16 %>
+          <p id='taxSixteen'></p>
+        </div>
+
+        <div class="flex flex-row gap-5">
+          <span class="text-right">Total</span>
+          <%# @invoice.invoice_items.sum(&:amount) + (@invoice.invoice_items.sum(&:amount) * 0.16) %>
+          <p id="grandTotal"></p>
+        </div>
+
+        <div class="flex flex-col">
+          <%= f.submit "Create An Invoice", class: "btn bg-green-500 py-1.5 px-2.5 rounded-md shadow-md mt-5 text-white max-w-[280px] mx-auto w-full hover:bg-green-600 active:bg-green-600 active:shadow-inner" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  let unitPriceValue;
+  let invoiceItemsCount = <%= @invoice.invoice_items.size %>;
+  const productSelectNested = document.querySelector('.productSelectNested');
+  const unitPriceNested = document.querySelector('.unitPriceNested');
+  const quantityNested = document.getElementById('quantityNested');
+  const amountResultNested = document.getElementById('amountResultNested');
+  const productSelect = document.querySelector('.product-select');
+  const unitPriceClass = document.querySelector('.unit-price');
+  const quantity = document.getElementById('quantity');
+  const amountResult = document.getElementById('amount-result');
+  const subtotalResult = document.getElementById('subtotal');
+  const taxContent = document.getElementById('taxSixteen');
+  const totalContent = document.getElementById('grandTotal');
+  const nestedContainer = document.getElementById('nestedContainer');
+  const addItemButton = document.getElementById('addButtonItems');
+  const deleteButtonItems = document.getElementById('deleteButtonItems');
+  const topHeadContainer = document.querySelector('.topHead');
+  const maxItemsMessage = document.createElement('p');
+  const maxItems = 2;
+
+
+  const removeItem = () => {
+    if (invoiceItemsCount > 0) {
+      invoiceItemsCount--;
+      updateAddItemButton();
+    }
+  };
+
+  const updateAddItemButton = () => {
+    addItemButton.disabled = invoiceItemsCount >= maxItems;
+    if (invoiceItemsCount >= maxItems) {
+        maxItemsMessage.textContent = 'Invoices are limited to two items';
+        maxItemsMessage.classList.remove('hidden');
+        maxItemsMessage.classList.add(
+          "bg-yellow-500",
+          "w-full",
+          "text-black",
+          "text-center",
+          "rounded-md",
+          "py-1.5"
+        );
+    } else {
+        maxItemsMessage.classList.add('hidden');
+    }
+  };
+
+  updateAddItemButton();
+
+  addItemButton.addEventListener('click', () => {
+      if (invoiceItemsCount < maxItems) {
+        invoiceItemsCount++;
+        updateAddItemButton();
+      }
+  });
+
+  const updateUnitPrice = async () => {
+    const selectedProductId = productSelect.value || 0;
+    unitPriceClass.textContent = selectedProductId;
+
+    await fetch(`/products/${selectedProductId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then((response) => response.json())
+      .then(data => {
+        unitPriceClass.value = data.unit_price.toFixed(2);
+        unitPriceValue = data.unit_price;
+        multiplyAmount(unitPriceValue);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const subtotalsAmount = (amount) => {
+    let formattedAmount;
+
+    if (amount.value === 0) {
+      formattedAmount = '$0.00';
+    } else {
+      formattedAmount = amount.toFixed(2);
+    }
+
+    subtotalResult.textContent = `$ ${formattedAmount}`;
+    getTax(formattedAmount)
+  };
+
+  const multiplyAmount = (unitPriceClass) => {
+    const selectedQuantity = quantity.value;
+    const amount = unitPriceClass * selectedQuantity;
+    amountResult.value = amount.toFixed(2);
+    subtotalsAmount(amount)
+  };
+
+  const getTax = (formattedAmount) => {
+    const taxConversion = formattedAmount * 0.16;
+    const formatedTax = taxConversion.toFixed(2);
+    taxContent.textContent = `$ ${formatedTax}`;
+    grandTotal(formattedAmount, formatedTax);
+  };
+
+  const grandTotal = (formattedAmount, formatedTax) => {
+    console.log('Amount: ', formattedAmount);
+    console.log('Tax', formatedTax);
+    const fAmount = parseFloat(formattedAmount);
+    const fTax = parseFloat(formatedTax)
+
+    const total = fAmount + fTax;
+    const fTotal = total.toFixed(2)
+    totalContent.textContent = `$ ${fTotal}`
+    console.log(fTotal);
+  };
+
+  if (productSelect) {
+    productSelect.addEventListener('change', updateUnitPrice);
+  }
+
+  if (quantity) {
+    quantity.addEventListener('input', () => {
+      multiplyAmount(unitPriceValue);
+    });
+  }
+
+  if (subtotalResult) {
+    subtotalResult.addEventListener('input', () => {
+      subtotalsAmount(amount);
+    });
+  }
+
+  topHeadContainer.appendChild(maxItemsMessage);
+</script>

@@ -1,0 +1,14 @@
+{
+    "name": "interviewproject",
+    "private": true,
+    "dependencies": {
+        "stimulus-dropdown": "^2.1.0"
+    },
+    "devDependencies": {},
+    "scripts": {},
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/documentos-digitales/code-test-carlos-ssh.git",
+    "author": "Carlos-SSH <carlos.anezeh@me.com>",
+    "license": "MIT"
+}
