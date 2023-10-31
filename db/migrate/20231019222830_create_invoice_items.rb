@@ -4,7 +4,7 @@ class CreateInvoiceItems < ActiveRecord::Migration[7.0]
       t.integer :invoice_id
       t.integer :product_id
       t.integer :quantity, default: 1
-      t.decimal :amount, precision: 10, scale: 2, default: 0.00
+      t.decimal :amount, precision: 10, scale: 4, default: 0.00
 
       t.timestamps
     end

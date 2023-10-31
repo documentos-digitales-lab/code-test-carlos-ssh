@@ -16,7 +16,7 @@ class InvoiceItemsController < ApplicationController
 
   def new
     @invoice_item = InvoiceItem.new
-    @invoice_item.build_item
+    @invoice_item.build_product
   end
 
   private
@@ -25,7 +25,7 @@ class InvoiceItemsController < ApplicationController
     params.require(:invoice_item).permit(
       :quantity,
       :amount,
-      product_attributes: %i[name unit_price]
+      product_attributes: %i[name description unit_price]
     )
   end
 end

@@ -7,15 +7,12 @@ class InvoicesController < ApplicationController
     @invoice.invoice_items.build
   end
 
-  def show; end
+  def show
+    @invoice = Invoice.find(params[:id])
+  end
 
   def create
     @invoice = @customer.invoices.build(invoice_params)
-
-    unless Product.where(id: params[:invoice][:invoice_items_attributes].values.pluck(:product_id)).exists?
-      flash[:error] = 'Invalid product selected'
-      render :new and return
-    end
 
     if @invoice.save
       redirect_to invoice_path(@invoice), notice: 'Invoice was successfully created.'
@@ -38,19 +35,16 @@ class InvoicesController < ApplicationController
   def invoice_params
     params.require(:invoice).permit(
       :customer_id,
-      :sub_total,
+      :subtotal,
       :tax,
       :total,
       invoice_items_attributes: [
         :quantity,
-        :product_id,
         :amount,
         :_destroy,
-        { product_attributes: %i[
-          name
-          description
-          unit_price
-        ] }
+        :product_id,
+        :name,
+        :unit_price
       ]
     )
   end
