@@ -9,7 +9,6 @@ class CustomersController < ApplicationController
     @greeting_message = @customer.fetch_greeting_message
 
     flash[:notice] = @greeting_message
-
   end
 
   def create
