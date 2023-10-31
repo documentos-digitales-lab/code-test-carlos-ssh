@@ -5,7 +5,11 @@ class CustomersController < ApplicationController
     @customer = Customer.find(params[:id])
     @invoice = Invoice.new
     @invoice.invoice_items.build
-    puts "@invoice.invoice_items: #{@invoice.invoice_items.inspect}"
+    @customer.current_id = @customer.id
+    @greeting_message = @customer.fetch_greeting_message
+
+    flash[:notice] = @greeting_message
+
   end
 
   def create

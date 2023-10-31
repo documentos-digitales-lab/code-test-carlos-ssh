@@ -4,17 +4,30 @@
     <li class="dark:text-slate-200">Create An Invoice</li>
   </ul>
 
-  <%# render 'customers/partials/form' %>
+  <h1 class="text-2xl font-bold text-center"><%= @personalized_greeting %></h1>
 
-  <%= form_for @invoice, url: invoices_path, data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' }, method: :post do |f| %>
+
+  <%= form_for @invoice,
+               url: invoices_path,
+               data: {
+                  controller: 'nested-form',
+                  nested_form_wrapper_selector_value: '.nested-form-wrapper',
+                  max_items: 2
+               },
+               method: :post do |f|
+  %>
     <%= f.hidden_field :customer_id, value: @customer.id %>
 
     <template data-nested-form-target="template">
       <%= f.fields_for :invoice_items, InvoiceItem.new, child_index: 'NEW_RECORD' do |item_form| %>
-        <div id="nestedContainer" class="p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3 my-5 nested-form-wrapper" data-controller="invoice-item"  data-new-record="<%= f.object.new_record? %>">
+        <div
+            class="p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3 my-5 nested-form-wrapper"
+            data-controller="invoice-item"
+            data-new-record="<%= f.object.new_record? %>"
+        >
           <div class="flex flex-col">
             <span class="font-bold pl-3">Quantity</span>
-            <%= item_form.number_field :quantity, id: 'quantityNested', min: 0, class: 'rounded-md border-slate-100 shadow-md' %>
+            <%= item_form.number_field :quantity, min: 0, class: 'rounded-md border-slate-100 shadow-md' %>
           </div>
 
           <div class="flex flex-col">
@@ -28,21 +41,21 @@
                             controller: 'invoice-item',
                             target: 'invoice-item.productSelect'
                           },
-                          class: 'productSelectNested rounded-md border-slate-100 shadow-md'
+                          class: 'rounded-md border-slate-100 shadow-md'
             %>
           </div>
 
-          <div class="">
+          <div>
             <%= item_form.fields_for :product_attributes do |product_form| %>
               <div class="flex flex-col">
                 <span class='font-bold pl-3'>Unit Price</span>
-                <%= product_form.text_field :unit_price, class: "unitPriceNested rounded-md border-slate-100 shadow-md" %>
+                <%= product_form.text_field :unit_price, class: "rounded-md border-slate-100 shadow-md" %>
               </div>
             <% end %>
           </div>
           <div class="flex flex-col">
             <span class='font-bold pl-3'>Amount</span>
-            <%= item_form.text_field :amount, id: 'amountResultNested', class: 'rounded-md border-slate-100 shadow-md' %>
+            <%= item_form.text_field :amount, class: 'rounded-md border-slate-100 shadow-md' %>
           </div>
           <div class="flex flex-col justify-center items-center h-full my-auto pt-4">
               <button
@@ -50,7 +63,6 @@
                   id="deleteButtonItems"
                   data-action="nested-form#remove"
                   class="text-red-500 font-bold text-4xl"
-                  onclick="removeItem();"
               >-</button>
               <%= f.hidden_field :_destroy %>
           </div>
@@ -92,7 +104,7 @@
             %>
           </div>
 
-          <div class="">
+          <div>
             <%= item_form.fields_for :product_attributes do |product_form| %>
               <div class="flex flex-col">
                 <span class='font-bold pl-3'>Unit Price</span>
@@ -106,27 +118,23 @@
           </div>
         </div>
       <% end %>
-    <div data-nested-form-target="target"></div>
     </div>
-
+    <div data-nested-form-target="target"></div>
 
     <div class="flex flex-col justify-end">
       <div class="bg-slate-200 rounded-md shadow-md my-5 p-5">
         <div class="flex flex-row gap-5">
           <span class="text-right">Subtotal</span>
           <p id="subtotal"></p>
-          <%# @invoice.invoice_items.sum(&:amount) %>
         </div>
 
         <div class="flex flex-row gap-5">
           <span class="text-right">Tax 16%</span>
-          <%# @invoice.invoice_items.sum(&:amount) * 0.16 %>
           <p id='taxSixteen'></p>
         </div>
 
         <div class="flex flex-row gap-5">
           <span class="text-right">Total</span>
-          <%# @invoice.invoice_items.sum(&:amount) + (@invoice.invoice_items.sum(&:amount) * 0.16) %>
           <p id="grandTotal"></p>
         </div>
 
@@ -141,10 +149,6 @@
 <script>
   let unitPriceValue;
   let invoiceItemsCount = <%= @invoice.invoice_items.size %>;
-  const productSelectNested = document.querySelector('.productSelectNested');
-  const unitPriceNested = document.querySelector('.unitPriceNested');
-  const quantityNested = document.getElementById('quantityNested');
-  const amountResultNested = document.getElementById('amountResultNested');
   const productSelect = document.querySelector('.product-select');
   const unitPriceClass = document.querySelector('.unit-price');
   const quantity = document.getElementById('quantity');
