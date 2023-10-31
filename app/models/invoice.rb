@@ -26,5 +26,4 @@ class Invoice < ApplicationRecord
       @calculating_totals = false
     end
   end
-
 end

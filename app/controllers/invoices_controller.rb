@@ -38,13 +38,13 @@ class InvoicesController < ApplicationController
       :subtotal,
       :tax,
       :total,
-      invoice_items_attributes: [
-        :quantity,
-        :amount,
-        :_destroy,
-        :product_id,
-        :name,
-        :unit_price
+      invoice_items_attributes: %i[
+        quantity
+        amount
+        _destroy
+        product_id
+        name
+        unit_price
       ]
     )
   end
