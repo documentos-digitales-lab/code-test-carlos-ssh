@@ -1,9 +1,14 @@
 class CustomersController < ApplicationController
-  def new
-  end
+  def new; end
 
   def show
     @customer = Customer.find(params[:id])
+    @invoice = Invoice.new
+    @invoice.invoice_items.build
+    @customer.current_id = @customer.id
+    @greeting_message = @customer.fetch_greeting_message
+
+    flash[:notice] = @greeting_message
   end
 
   def create

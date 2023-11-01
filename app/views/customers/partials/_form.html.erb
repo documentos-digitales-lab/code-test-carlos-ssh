@@ -1,0 +1,48 @@
+    <template data-nested-form-target="template">
+      <%= f.fields_for :invoice_items, InvoiceItem.new, child_index: 'NEW_RECORD' do |item_form| %>
+        <div id="nestedContainer" class="p-5 rounded-md shadow-md bg-slate-200 w-full flex flex-row justify-center items-center gap-3 my-5 nested-form-wrapper" data-controller="invoice-item"  data-new-record="<%= f.object.new_record? %>">
+          <div class="flex flex-col">
+            <span class="font-bold pl-3">Quantity</span>
+            <%= item_form.number_field :quantity, id: 'quantityNested', min: 0, class: 'rounded-md border-slate-100 shadow-md' %>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="font-bold pl-3">Service</span>
+            <%= item_form.collection_select :product_id,
+                          Product.all,
+                          :id,
+                          :name,
+                          { prompt: 'Select a product' },
+                          data: {
+                            controller: 'invoice-item',
+                            target: 'invoice-item.productSelect'
+                          },
+                          class: 'productSelectNested rounded-md border-slate-100 shadow-md'
+            %>
+          </div>
+
+          <div class="">
+            <%= item_form.fields_for :product_attributes do |product_form| %>
+              <div class="flex flex-col">
+                <span class='font-bold pl-3'>Unit Price</span>
+                <%= product_form.text_field :unit_price, class: "unitPriceNested rounded-md border-slate-100 shadow-md" %>
+              </div>
+            <% end %>
+          </div>
+          <div class="flex flex-col">
+            <span class='font-bold pl-3'>Amount</span>
+            <%= item_form.text_field :amount, id: 'amountResultNested', class: 'rounded-md border-slate-100 shadow-md' %>
+          </div>
+          <div class="flex flex-col justify-center items-center h-full my-auto pt-4">
+              <button
+                  type="button"
+                  id="deleteButtonItems"
+                  data-action="nested-form#remove"
+                  class="text-red-500 font-bold text-4xl"
+                  onclick="removeItem();"
+              >-</button>
+              <%= f.hidden_field :_destroy %>
+          </div>
+        </div>
+      <% end %>
+    </template>

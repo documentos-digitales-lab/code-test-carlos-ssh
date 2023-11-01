@@ -1,0 +1,5 @@
+<% flash.each do |key, value| %>
+    <div class="w-full text-center text-white py-2 <%= flash_class(key) %>">
+        <%= value %>
+    </div>
+<% end %>

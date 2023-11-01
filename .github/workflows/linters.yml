@@ -1,0 +1,22 @@
+name: Linters and Tests
+
+on: pull_request
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.1.x
+      - name: Setup Rubocop
+        run: |
+          gem install --no-document rubocop:'~>1.57.1'
+          [ -f .rubocop.yml ]
+      - name: Rubocop Report
+        run: rubocop --color

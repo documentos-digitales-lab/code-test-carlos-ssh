@@ -22,6 +22,12 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
+/node_modules/
+/node_modules/*
+
+.env.local
+.DS_Store
+
 # Ignore uploaded files in development.
 /storage/*
 !/storage/.keep
@@ -33,3 +39,6 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
