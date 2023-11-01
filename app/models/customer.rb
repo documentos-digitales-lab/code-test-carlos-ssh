@@ -1,7 +1,7 @@
 class Customer < ApplicationRecord
   attr_accessor :current_id
 
-  validates :rfc, presence: true
+  validates :rfc, length: { minimum: 3 }, presence: true
   has_many :invoices
 
   def fetch_greeting_message
